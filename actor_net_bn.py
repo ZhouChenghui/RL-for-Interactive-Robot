@@ -2,16 +2,17 @@ import tensorflow as tf
 import math
 from batch_normalization.batch_norm import batch_norm
 import numpy as np
-LEARNING_RATE = 0.0001
+LEARNING_RATE = 0.0001 #
 TAU = 0.001
 BATCH_SIZE = 64
-N_HIDDEN_1 = 400
-N_HIDDEN_2 = 300
+N_HIDDEN_1 = 400#12 #400
+N_HIDDEN_2 = 300#9 #300
 
 class ActorNet_bn:
     """ Actor Network Model with Batch Normalization of DDPG Algorithm """
     
     def __init__(self,num_states,num_actions):
+
         tf.reset_default_graph()
         self.g=tf.Graph()
         with self.g.as_default():
@@ -77,6 +78,7 @@ class ActorNet_bn:
             
         
     def evaluate_actor(self,state_t):
+        #print ("POOOOOOOO")
         return self.sess.run(self.actor_model, feed_dict={self.actor_state_in:state_t,self.is_training: False})        
         
         

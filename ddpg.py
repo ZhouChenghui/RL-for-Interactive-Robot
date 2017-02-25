@@ -37,8 +37,8 @@ class DDPG:
         self.counter = 0
         
         action_max = np.array(env.action_space.high).tolist()
-        action_min = np.array(env.action_space.low).tolist()        
-        action_bounds = [action_max,action_min] 
+        action_min = np.array(env.action_space.low).tolist()
+        action_bounds = [action_max,action_min]
         self.grad_inv = grad_inverter(action_bounds)
         
         
@@ -99,8 +99,10 @@ class DDPG:
         action_for_delQ = self.evaluate_actor(self.state_t_batch) 
         
         if is_grad_inverter:        
-            self.del_Q_a = self.critic_net.compute_delQ_a(self.state_t_batch,action_for_delQ)#/BATCH_SIZE            
-            self.del_Q_a = self.grad_inv.invert(self.del_Q_a,action_for_delQ) 
+            self.del_Q_a = self.critic_net.compute_delQ_a(self.state_t_batch,action_for_delQ)#/BATCH_SIZE
+            #print ("gradient: "+str(self.del_Q_a))
+            self.del_Q_a = self.grad_inv.invert(self.del_Q_a,action_for_delQ)
+            #print ("gradient: "+ str(self.del_Q_a))
         else:
             self.del_Q_a = self.critic_net.compute_delQ_a(self.state_t_batch,action_for_delQ)[0]#/BATCH_SIZE
         
@@ -110,18 +112,4 @@ class DDPG:
         # Update target Critic and actor network
         self.critic_net.update_target_critic()
         self.actor_net.update_target_actor()
-        
-                
-        
-        
-        
-                
-        
-        
-        
-                     
-                 
-        
-
-
 

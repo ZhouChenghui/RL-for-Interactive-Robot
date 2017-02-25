@@ -10,7 +10,8 @@ N_HIDDEN_2 = 300
 class CriticNet_bn:
     """ Critic Q value model with batch normalization of the DDPG algorithm """
     def __init__(self,num_states,num_actions):
-        
+
+        #print ("BOOOOOO")
         tf.reset_default_graph()
         self.g=tf.Graph()
         with self.g.as_default():
@@ -19,7 +20,7 @@ class CriticNet_bn:
             #Critic Q Network:
             self.critic_state_in =  tf.placeholder("float",[None,num_states])
             self.critic_action_in = tf.placeholder("float",[None,num_actions]) 
-            self.W1_c = tf.Variable(tf.random_uniform([num_states,N_HIDDEN_1],-1/math.sqrt(num_states),1/math.sqrt(num_states)))
+            self.W1_c = tf.Variable(tf.random_uniform([num_states,N_HIDDEN_1],-1.0/math.sqrt(num_states),1.0/math.sqrt(num_states)))
             self.B1_c = tf.Variable(tf.random_uniform([N_HIDDEN_1],-1/math.sqrt(num_states),1/math.sqrt(num_states)))
             self.W2_c = tf.Variable(tf.random_uniform([N_HIDDEN_1,N_HIDDEN_2],-1/math.sqrt(N_HIDDEN_1+num_actions),1/math.sqrt(N_HIDDEN_1+num_actions)))  
             self.B2_c= tf.Variable(tf.random_uniform([N_HIDDEN_2],-1/math.sqrt(N_HIDDEN_1+num_actions),1/math.sqrt(N_HIDDEN_1+num_actions)))
@@ -56,6 +57,7 @@ class CriticNet_bn:
             self.t_H1_c = tf.nn.softplus(self.t_H1_c_bn.bnorm) + self.t_B1_c
 
             self.t_H2_t = tf.matmul(self.t_H1_c,self.t_W2_c)+tf.matmul(self.t_critic_action_in,self.t_W2_action_c)
+            print (self.t_H2_t)
             self.t_H2_c_bn = batch_norm(self.t_H2_t,N_HIDDEN_2,self.is_training,self.sess,self.H2_c_bn)
             self.t_H2_c = tf.nn.tanh(self.t_H2_c_bn.bnorm) + self.t_B2_c
             
@@ -96,6 +98,7 @@ class CriticNet_bn:
         
         
     def compute_delQ_a(self,state_t,action_t):
+
         return self.sess.run(self.action_gradients, feed_dict={self.critic_state_in: state_t,self.critic_action_in: action_t,self.is_training: False})
 
     def update_target_critic(self):
